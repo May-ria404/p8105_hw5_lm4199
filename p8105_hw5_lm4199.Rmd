@@ -118,4 +118,27 @@ study_tidy =
 study_tidy
 ```
 
+```{r}
+study_tidy |>
+  mutate(
+    arm = if_else(arm == "con", "Control", "Experimental"),
+    participant = str_c(arm, "_", subject_id)
+  ) |>
+  ggplot(
+    aes(x = week, y = observation, group = participant, color = arm)
+  ) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(breaks = 1:8) +
+  labs(
+    title = "Weekly observations by study arm",
+    x = "Week",
+    y = "Observation",
+    color = "Study arm"
+  ) +
+  theme_minimal()
+```
+
+The combined dataset includes `r nrow(study_subjects)` participants: `r sum(study_subjects$arm == "con")` in the control arm and `r sum(study_subjects$arm == "exp")` in the experimental arm. Each participant was observed over `r n_distinct(study_tidy$week)` weeks, yielding `r nrow(study_tidy)` participant-week observations. Experimental participants generally showed increasing observations over time, while control participants fluctuated without a clear sustained trend. The groups overlapped initially, but experimental observations were generally higher in later weeks. Individual variability remained evident in both arms.
+
 ## Problem 3
