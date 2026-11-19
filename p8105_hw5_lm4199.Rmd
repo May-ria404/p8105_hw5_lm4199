@@ -17,6 +17,23 @@ source("source/birthday_sim.R")
 birthday_sim(n = 10)
 ```
 
+```{r}
+birthday_results =
+  expand_grid(
+    n = 10,
+    iter = 1:10000
+  ) |>
+  mutate(
+    shared_birthday = map(n, birthday_sim)
+  ) |>
+  unnest(shared_birthday)
+
+
+birthday_results |>
+  summarise(
+    probability = mean(shared_birthday)
+  )
+```
 
 
 
