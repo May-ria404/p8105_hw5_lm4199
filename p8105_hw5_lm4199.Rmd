@@ -187,4 +187,52 @@ power_summary |>
   theme_minimal()
 ```
 
+```{r}
+estimate_summary =
+  ttest_results |>
+  group_by(mu) |>
+  summarise(
+    all_tests = mean(estimate),
+    rejected_tests = mean(estimate[reject]),
+    .groups = "drop"
+  )
 
+estimate_summary
+```
+
+```{r}
+estimate_summary |>
+  pivot_longer(
+    all_tests:rejected_tests,
+    names_to = "samples",
+    values_to = "mean_estimate"
+  ) |>
+  mutate(
+    samples = if_else(
+      samples == "all_tests",
+      "All tests",
+      "Rejected tests only"
+    )
+  ) |>
+  ggplot(
+    aes(
+      x = mu,
+      y = mean_estimate,
+      color = samples
+    )
+  ) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(breaks = 0:6) +
+  labs(
+    title = "Average estimates across simulated tests",
+    x = "True mean",
+    y = "Average estimated mean",
+    color = "Included tests"
+  ) +
+  theme_minimal()
+```
+
+With sample size and standard deviation fixed, rejection probability increased as the true mean moved further from zero. At a true mean of 0, the estimated Type I error rate was `r round(100 * power_summary$rejection_rate[power_summary$mu == 0], 1)`%, close to the nominal 5% level. At a true mean of 3, estimated power was `r round(100 * power_summary$rejection_rate[power_summary$mu == 3], 1)`%, and it approached 100% for larger effects.
+
+Across all tests, average estimates were close to the true means. At a true mean of 1, the average estimate was `r round(estimate_summary$all_tests[estimate_summary$mu == 1], 2)` across all tests, compared with `r round(estimate_summary$rejected_tests[estimate_summary$mu == 1], 2)` among rejected tests. For small positive effects, significance-based selection favors unusually large positive estimates, producing upward selection bias. As power increases, most tests are retained and the two averages converge. At a true mean of 0, two-sided rejection selects both positive and negative extremes, so the signed average remains centered near zero, subject to simulation variability.
