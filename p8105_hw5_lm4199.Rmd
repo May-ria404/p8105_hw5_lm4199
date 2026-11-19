@@ -1,0 +1,25 @@
+---
+title: "Homework 5"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+
+set.seed(1)
+```
+
+## Problem 1
+
+```{r}
+source("source/birthday_sim.R")
+
+birthday_sim(n = 10)
+```
+
+
+
+
+## Problem 2
+
+## Problem 3
