@@ -145,8 +145,46 @@ The combined dataset includes `r nrow(study_subjects)` participants: `r sum(stud
 
 ```{r}
 source("source/sim_ttest.R")
+```
 
-sim_ttest(mu = 0)
+```{r}
+ttest_results =
+  expand_grid(
+    mu = 0:6,
+    iter = 1:5000
+  ) |>
+  mutate(
+    result = map(mu, sim_ttest)
+  ) |>
+  unnest(result) |>
+  mutate(
+    reject = p.value < 0.05
+  )
+
+power_summary =
+  ttest_results |>
+  group_by(mu) |>
+  summarise(
+    rejection_rate = mean(reject),
+    .groups = "drop"
+  )
+
+power_summary
+```
+
+```{r}
+power_summary |>
+  ggplot(aes(x = mu, y = rejection_rate)) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(breaks = 0:6) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Power of a one-sample t-test",
+    x = "True mean",
+    y = "Rejection probability"
+  ) +
+  theme_minimal()
 ```
 
 
