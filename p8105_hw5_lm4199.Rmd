@@ -35,7 +35,41 @@ birthday_results |>
   )
 ```
 
+```{r}
+birthday_results =
+  expand_grid(
+    n = 2:50,
+    iter = 1:10000
+  ) |>
+  mutate(
+    shared_birthday = map(n, birthday_sim)
+  ) |>
+  unnest(shared_birthday)
 
+birthday_summary =
+  birthday_results |>
+  group_by(n) |>
+  summarise(
+    probability = mean(shared_birthday),
+    .groups = "drop"
+  )
+```
+
+```{r}
+birthday_summary |>
+  ggplot(aes(x = n, y = probability)) +
+  geom_line() +
+  geom_point() +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Probability of a shared birthday",
+    x = "Group size",
+    y = "Estimated probability"
+  ) +
+  theme_minimal()
+```
+
+Assuming independent birthdays uniformly distributed across 365 days, I ran `r n_distinct(birthday_results$iter)` simulations for each group size from `r min(birthday_summary$n)` to `r max(birthday_summary$n)`. The estimated probability of at least one shared birthday increased with group size, reaching `r round(100 * birthday_summary$probability[birthday_summary$n == 23], 1)`% for 23 people and `r round(100 * birthday_summary$probability[birthday_summary$n == 50], 1)`% for 50 people. As group size increases, the number of possible pairs grows, creating more opportunities for a shared birthday.
 
 ## Problem 2
 
