@@ -73,4 +73,20 @@ Assuming independent birthdays uniformly distributed across 365 days, I ran `r n
 
 ## Problem 2
 
+```{r}
+study_files =
+  tibble(
+    file_name = list.files("hw5_data/data")
+  )
+
+study_files =
+  study_files |>
+  mutate(
+    file_path = str_c("hw5_data/data/", file_name),
+    data = map(file_path, read_csv, show_col_types = FALSE)
+  )
+
+study_files
+```
+
 ## Problem 3
