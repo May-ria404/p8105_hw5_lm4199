@@ -89,4 +89,33 @@ study_files =
 study_files
 ```
 
+```{r}
+study_subjects =
+  study_files |>
+  mutate(
+    file_name = str_replace(file_name, "\\.csv$", "")
+  ) |>
+  separate(
+    file_name,
+    into = c("arm", "subject_id"),
+    sep = "_"
+  ) |>
+  select(arm, subject_id, data)
+
+study_tidy =
+  study_subjects |>
+  unnest(data) |>
+  pivot_longer(
+    week_1:week_8,
+    names_to = "week",
+    names_prefix = "week_",
+    values_to = "observation"
+  ) |>
+  mutate(
+    week = as.numeric(week)
+  )
+
+study_tidy
+```
+
 ## Problem 3
