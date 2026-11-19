@@ -142,3 +142,11 @@ study_tidy |>
 The combined dataset includes `r nrow(study_subjects)` participants: `r sum(study_subjects$arm == "con")` in the control arm and `r sum(study_subjects$arm == "exp")` in the experimental arm. Each participant was observed over `r n_distinct(study_tidy$week)` weeks, yielding `r nrow(study_tidy)` participant-week observations. Experimental participants generally showed increasing observations over time, while control participants fluctuated without a clear sustained trend. The groups overlapped initially, but experimental observations were generally higher in later weeks. Individual variability remained evident in both arms.
 
 ## Problem 3
+
+```{r}
+source("source/sim_ttest.R")
+
+sim_ttest(mu = 0)
+```
+
+
